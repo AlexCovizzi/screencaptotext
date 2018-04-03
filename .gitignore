@@ -1,6 +1,4 @@
 # pipenv files
-Pipfile
-Pipfile.lock
 .venv
 
 # Byte-compiled / optimized / DLL files
