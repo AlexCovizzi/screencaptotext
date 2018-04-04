@@ -4,8 +4,6 @@ import numpy as np
 import pytesseract
 from statistics import mode
 import time
-import dlimage
-import messagebox
 
 # img PIL Image
 # bounds (X1, Y1, X2, Y2)
@@ -35,6 +33,7 @@ def preprocess(pil_img):
     cv_img = np.array(pil_img, dtype=np.uint8)
     cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2GRAY)
     cv_img = contrast(cv_img)
+    _,cv_img = cv2.threshold(cv_img, 200, 255, cv2.THRESH_TOZERO)
     return Image.fromarray(cv_img)
 
 def contrast(cv_img, alpha=1.5, beta=-60.0):
@@ -59,7 +58,7 @@ def chars_to_words(chars):
     words = [chars[0]]
     for char in chars[1:]:
         last = words[-1]
-        if last['x2']-2 < char['x1'] < last['x2']+6 and ( last['y1']-8 < char['y1'] < last['y1']+8 or last['y2']-8 < char['y2'] < last['y2']+8 ):
+        if last['x2']-4 < char['x1'] < last['x2']+8 and ( last['y1']-12 < char['y1'] < last['y1']+12 or last['y2']-12 < char['y2'] < last['y2']+12 ):
             last['text'] += char['text']
             last['x2'] = char['x2']
             if char['y1'] < last['y1']:
@@ -73,7 +72,7 @@ def words_to_lines(words):
     lines = [words[0]]
     for word in words[1:]:
         last = lines[-1]
-        if last['x2']-2 < word['x1'] < last['x2']+16 and ( last['y1']-6 < word['y1'] < last['y1']+6 or last['y2']-6 < word['y2'] < last['y2']+6 ):
+        if last['x2'] < word['x1'] < last['x2']+24 and ( last['y1']-12 < word['y1'] < last['y1']+12 or last['y2']-12 < word['y2'] < last['y2']+12 ):
             last['text'] += " "+word['text']
             last['x2'] = word['x2']
         else:
@@ -81,8 +80,11 @@ def words_to_lines(words):
     return lines
 
 if __name__ == '__main__':
-    url = "https://i.redd.it/71szkvlrfgj01.jpg"
-    pil_img = downloadimage.get(url)
+    import dlimage
+    import messagebox
+
+    url = "https://i.redd.it/rdz88lh48rp01.png"
+    pil_img = dlimage.get(url)
 
     cv_img = np.array(pil_img, dtype=np.uint8)
     cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2BGR)

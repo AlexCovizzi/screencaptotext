@@ -1,5 +1,9 @@
-# pipenv files
-.venv
+
+#images
+*.jpg
+*.jpeg
+*.png
+*.tif
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

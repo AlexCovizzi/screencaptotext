@@ -11,7 +11,7 @@ def find(pil_img):
     prep_img = preprocess(cv_img)
     boxes = find_bounding_boxes(prep_img)
     # sort by y1
-    boxes.sort(key=lambda box: box[1])
+    boxes.sort(key=lambda box: box['y1'])
     
     return boxes
 
@@ -19,8 +19,9 @@ def preprocess(cv_img):
     # preprocess
     cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
     cv_img = cv2.GaussianBlur(cv_img, (7,7), 0)
-    cv_img = cv2.Canny(cv_img, 20, 40)
-
+    cv_img = cv2.Canny(cv_img, 10, 40)
+    cv_img = cv2.GaussianBlur(cv_img, (7,7), 0)
+    _,cv_img = cv2.threshold(cv_img, 40, 255, cv2.THRESH_BINARY)
     return cv_img
 
 def find_bounding_boxes(cv_img):
@@ -35,7 +36,7 @@ def find_bounding_boxes(cv_img):
         bounding_rect = np.array([[x, y], [x+w, y], [x+w, y+h], [x, y+h]])
         if w > 28 and h > 28 and is_contour_mostly_rectangular(cnt, bounding_rect):
             #cv2.drawContours(cv_img, [contours[parent]], 0, (0,255,0), 3)
-            box = (x, y, x+w, y+h)
+            box = {'x1': x, 'y1':y, 'x2': x+w, 'y2':y+h}
             boxes.append(box)
 
     return boxes
@@ -59,11 +60,20 @@ def is_contour_mostly_rectangular(cnt, bounding_rect):
 
     return (ret < 0.15 and vertical > 6 and horizontal > 24)
 
+def contrast(cv_img, alpha=1.5, beta=-60.0):
+    array_alpha = np.array([float(alpha)])
+    array_beta = np.array([float(beta)])
+
+    cv_img = cv2.add(cv_img, array_beta)
+    cv_img = cv2.multiply(cv_img, array_alpha)
+    
+    return cv_img
+
 if __name__ == '__main__':
     import dlimage
     import pytesseract
 
-    urls = ["https://i.redd.it/71szkvlrfgj01.jpg","https://i.imgur.com/tQIXpmF.jpg","https://i.imgur.com/ub1JcdD.jpg","https://i.imgur.com/nsuVc9I.jpg","https://i.redd.it/75hvw31dg5o01.jpg"]
+    urls = ["https://i.redd.it/3y1cpvpjshp01.jpg"]
     
     for url in urls:
         pil_img = dlimage.get(url)
@@ -73,7 +83,7 @@ if __name__ == '__main__':
         boxes = find(pil_img)
 
         for box in boxes:
-            x1, y1, x2, y2 = box
+            x1, y1, x2, y2 = (box['x1'], box['y1'], box['x2'], box['y2'])
             bounding_rect = np.array([[x1, y1], [x2, y1], [x2, y2], [x1, y2]])
             cv2.drawContours(cv_img, [bounding_rect], 0, (0,255,0), 3)
 

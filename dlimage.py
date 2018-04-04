@@ -12,7 +12,7 @@ def get(url):
 
     img = Image.open(io.BytesIO(response.content))
     img = img.convert('RGB')
-    img = resize(img, 720)
+    img = resize(img, 960)
 
     return img
 
