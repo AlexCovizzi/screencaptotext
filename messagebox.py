@@ -18,7 +18,8 @@ def find(pil_img):
 def preprocess(cv_img):
     # preprocess
     cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
-    cv_img = cv2.GaussianBlur(cv_img, (7,7), 0)
+    #cv_img = cv2.GaussianBlur(cv_img, (7,7), 0)
+    cv_img = contrast(cv_img, 1.455, -80)
     cv_img = cv2.Canny(cv_img, 10, 40)
     cv_img = cv2.GaussianBlur(cv_img, (7,7), 0)
     _,cv_img = cv2.threshold(cv_img, 40, 255, cv2.THRESH_BINARY)

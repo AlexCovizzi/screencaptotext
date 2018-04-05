@@ -40,8 +40,6 @@ def validate_url(url):
     return True
 
 if __name__ == "__main__":
-    import pprint
-
     url = 'https://i.redd.it/enoz7ethrqp01.jpg'
     messages = convert(url)
 
