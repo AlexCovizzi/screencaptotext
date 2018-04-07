@@ -25,9 +25,10 @@ def convert(img):
         if message['text']:
             messages.append(message)
 
-    msg_json = json.dumps(messages)
+    ret = {"messages":messages}
+    ret_json = json.dumps(ret)
 
-    return msg_json
+    return ret_json
 
 def text_line_inside_box(line, box):
     line_x1, line_y1, line_x2, line_y2 = (line['x1'], line['y1'], line['x2'], line['y2'])
@@ -40,8 +41,10 @@ def validate_url(url):
     return True
 
 if __name__ == "__main__":
-    url = 'https://i.redd.it/enoz7ethrqp01.jpg'
-    messages = convert(url)
+    import sys
 
-    print(json.loads(messages))
+    img_url = sys.argv[1]
+    ret_json = convert(img_url)
+
+    print(ret_json)
     

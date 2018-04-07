@@ -18,7 +18,7 @@ def find(pil_img):
 def preprocess(cv_img):
     # preprocess
     cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
-    #cv_img = cv2.GaussianBlur(cv_img, (7,7), 0)
+    cv_img = cv2.GaussianBlur(cv_img, (7,7), 0)
     cv_img = contrast(cv_img, 1.455, -80)
     cv_img = cv2.Canny(cv_img, 10, 40)
     cv_img = cv2.GaussianBlur(cv_img, (7,7), 0)
@@ -59,7 +59,7 @@ def is_contour_mostly_rectangular(cnt, bounding_rect):
         last_x = x
         last_y = y
 
-    return (ret < 0.15 and vertical > 6 and horizontal > 24)
+    return (ret < 0.2 and vertical > 6 and horizontal > 24)
 
 def contrast(cv_img, alpha=1.5, beta=-60.0):
     array_alpha = np.array([float(alpha)])
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     import dlimage
     import pytesseract
 
-    urls = ["https://i.redd.it/3y1cpvpjshp01.jpg"]
+    urls = ["https://i.redd.it/harvn2jkxcq01.jpg"]
     
     for url in urls:
         pil_img = dlimage.get(url)

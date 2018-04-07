@@ -32,8 +32,12 @@ def process(pil_img, bounds = None):
 def preprocess(pil_img):
     cv_img = np.array(pil_img, dtype=np.uint8)
     cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2GRAY)
-    cv_img = contrast(cv_img)
-    _,cv_img = cv2.threshold(cv_img, 200, 255, cv2.THRESH_TOZERO)
+    # reversing image color, works better with contrast
+    cv_img = cv2.bitwise_not(cv_img)
+    cv_img = contrast(cv_img, 10, -40)
+    #_,cv_img = cv2.threshold(cv_img, 120, 255, cv2.THRESH_BINARY_INV)
+    cv2.imshow('img', cv2.resize(cv_img, (0,0), fx=0.4, fy=0.4))
+    cv2.waitKey(0)
     return Image.fromarray(cv_img)
 
 def contrast(cv_img, alpha=1.5, beta=-60.0):
@@ -83,7 +87,9 @@ if __name__ == '__main__':
     import dlimage
     import messagebox
 
-    url = "https://i.redd.it/rdz88lh48rp01.png"
+    url = "https://i.redd.it/harvn2jkxcq01.jpg"
+    url = "https://i.redd.it/h6b14yas0cq01.jpg"
+    url="https://i.imgur.com/xkcfChW.jpg"
     pil_img = dlimage.get(url)
 
     cv_img = np.array(pil_img, dtype=np.uint8)
